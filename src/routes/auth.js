@@ -250,6 +250,24 @@ router.post('/inbox/:id/read', authenticate, async (req, res) => {
   res.json({ success: true });
 });
 
+// DELETE /api/auth/inbox/:id (Delete notification message)
+router.delete('/inbox/:id', authenticate, async (req, res) => {
+  const success = await emailService.deleteMessage(req.params.id, req.user);
+  if (!success) {
+    return res.status(403).json({ error: 'Message not found or permission denied' });
+  }
+  res.json({ success: true, message: 'Message deleted' });
+});
+
+// POST /api/auth/inbox/:id/delete (Alternative)
+router.post('/inbox/:id/delete', authenticate, async (req, res) => {
+  const success = await emailService.deleteMessage(req.params.id, req.user);
+  if (!success) {
+    return res.status(403).json({ error: 'Message not found or permission denied' });
+  }
+  res.json({ success: true, message: 'Message deleted' });
+});
+
 // POST /api/auth/logout
 router.post('/logout', (req, res) => {
   res.clearCookie('token');

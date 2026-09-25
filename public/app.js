@@ -425,17 +425,25 @@ const app = {
 
     tbody.innerHTML = users.map(u => {
       const isSuperManager = u.role === 'super_manager';
-      let actionHtml = `<span style="color:var(--text-muted); font-size:0.8rem;">Protected</span>`;
+      const isAdmin = u.role === 'admin';
+      let actionHtml = '';
 
-      if (isSuperManager) {
+      if (isAdmin) {
         actionHtml = `
-          <div style="display:flex; gap:6px;">
+          <button class="btn btn-secondary btn-sm" onclick="app.promptEditEmail('${u.user_id}', '${u.full_name}', '${u.email}')">✏️ Edit Email</button>
+        `;
+      } else if (isSuperManager) {
+        actionHtml = `
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="app.promptEditEmail('${u.user_id}', '${u.full_name}', '${u.email}')">✏️ Edit Email</button>
             ${u.active 
               ? `<button class="btn btn-secondary btn-sm" onclick="app.deactivateUser('${u.user_id}', '${u.full_name}')">Deactivate</button>` 
               : `<button class="btn btn-success btn-sm" onclick="app.activateUser('${u.user_id}', '${u.full_name}')">Activate</button>`}
             <button class="btn btn-danger btn-sm" onclick="app.promptDeleteUser('${u.user_id}', '${u.full_name}', '${u.role}')">Delete</button>
           </div>
         `;
+      } else {
+        actionHtml = `<span style="color:var(--text-muted); font-size:0.8rem;">Managed by Branch</span>`;
       }
 
       return `
@@ -1468,12 +1476,17 @@ const app = {
 
       list.innerHTML = messages.map(m => `
         <div style="background:var(--bg-primary); border:1px solid ${m.read ? 'var(--border)' : 'var(--accent)'}; border-radius:8px; padding:12px;">
-          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px; align-items:center;">
             <strong style="color:var(--accent); font-size:0.9rem;">${m.subject}</strong>
-            <span style="font-size:0.75rem; color:var(--text-muted);">${new Date(m.created_at).toLocaleTimeString()}</span>
+            <span style="font-size:0.75rem; color:var(--text-muted);">${new Date(m.created_at).toLocaleString()}</span>
           </div>
-          <div style="font-size:0.85rem; margin-bottom:8px; color:var(--text-main); white-space:pre-wrap;">${m.text}</div>
-          ${!m.read ? `<button class="btn btn-secondary btn-sm" onclick="app.markMessageRead('${m.id}')">Mark as Read</button>` : '<span style="font-size:0.75rem; color:var(--text-muted);">✓ Read</span>'}
+          <div style="font-size:0.85rem; margin-bottom:10px; color:var(--text-main); white-space:pre-wrap;">${m.text}</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              ${!m.read ? `<button class="btn btn-secondary btn-sm" onclick="app.markMessageRead('${m.id}')">Mark as Read</button>` : '<span style="font-size:0.75rem; color:var(--text-muted);">✓ Read</span>'}
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="app.deleteInboxMessage('${m.id}')">🗑️ Delete</button>
+          </div>
         </div>
       `).join('') || `<p style="text-align:center; color:var(--text-muted); padding:2rem 0;">Your inbox is empty.</p>`;
 
@@ -1492,6 +1505,55 @@ const app = {
       await this.openInboxModal();
       this.pollInboxCount();
     } catch (_) {}
+  },
+
+  async deleteInboxMessage(msgId) {
+    try {
+      const res = await fetch(`/api/auth/inbox/${msgId}`, {
+        method: 'DELETE',
+        headers: this.getAuthHeaders()
+      });
+      const data = await res.json();
+      if (!res.ok) return this.showToast(data.error || 'Failed to delete message', 'error');
+
+      this.showToast('Notification deleted');
+      await this.openInboxModal();
+      this.pollInboxCount();
+    } catch (err) {
+      this.showToast('Network error deleting message', 'error');
+    }
+  },
+
+  promptEditEmail(userId, name, currentEmail) {
+    document.getElementById('edit-email-user-id').value = userId;
+    document.getElementById('edit-email-user-name').textContent = name;
+    document.getElementById('edit-email-input').value = currentEmail || '';
+    this.openModal('edit-email-modal');
+  },
+
+  async handleSaveEmail(e) {
+    e.preventDefault();
+    const userId = document.getElementById('edit-email-user-id').value;
+    const email = document.getElementById('edit-email-input').value.trim();
+
+    try {
+      const res = await fetch(`/api/users/${userId}/email`, {
+        method: 'PUT',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (!res.ok) return this.showToast(data.error || 'Failed to update email', 'error');
+
+      this.closeModal('edit-email-modal');
+      this.showToast(data.message || 'Email updated successfully');
+      if (this.currentUser && this.currentUser.userId === userId) {
+        this.currentUser.email = email;
+      }
+      this.loadAdminUsers();
+    } catch (err) {
+      this.showToast('Network error updating email', 'error');
+    }
   }
 };
 

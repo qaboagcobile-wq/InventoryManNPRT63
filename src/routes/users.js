@@ -399,4 +399,39 @@ router.post('/staff', authenticate, async (req, res) => {
     res.json({ success: true, message: `Account for ${targetUser.full_name} (${targetUser.role}) has been deactivated.` });
   });
 
+  // PUT /api/users/:id/email (Edit user's email address)
+  router.put('/:id/email', authenticate, async (req, res) => {
+    const targetId = req.params.id;
+    const { email } = req.body;
+
+    if (!email || !email.trim() || !email.includes('@')) {
+      return res.status(400).json({ error: 'A valid email address is required' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Permissions: Admin can edit any admin or managed user; otherwise user can only edit their own
+    if (req.user.role !== 'admin' && req.user.user_id !== targetId) {
+      return res.status(403).json({ error: 'Permission denied to edit this email address' });
+    }
+
+    // Check email uniqueness
+    const existing = await dataStore.find('users', u => u.email.toLowerCase() === cleanEmail && u.user_id !== targetId);
+    if (existing) {
+      return res.status(400).json({ error: 'This email address is already in use by another account' });
+    }
+
+    const updated = await dataStore.update('users', u => u.user_id === targetId, {
+      email: cleanEmail,
+      updated_at: new Date().toISOString()
+    });
+
+    if (!updated) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const { password_hash, ...safe } = updated;
+    res.json({ success: true, user: safe, message: `Email updated to ${cleanEmail}` });
+  });
+
 module.exports = router;

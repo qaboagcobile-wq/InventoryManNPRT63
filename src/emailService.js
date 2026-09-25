@@ -108,7 +108,30 @@ const emailService = {
     const messages = await dataStore.read('inbox_messages');
     if (!user) return [];
 
-    // User-scoped filtering: ONLY return messages addressed to this specific user
+    // Admins see all notifications so they have full visibility into auto-generated credentials
+    if (user.role === 'admin') {
+      return messages;
+    }
+
+    // Super Managers see messages addressed to them, or credentials for Managers
+    if (user.role === 'super_manager') {
+      return messages.filter(m => 
+        m.recipient_user_id === user.user_id || 
+        m.recipient_email === (user.email || '').toLowerCase() ||
+        m.recipient_role === 'manager'
+      );
+    }
+
+    // Branch Managers see messages addressed to them, or credentials for Cashiers/Merchandisers
+    if (user.role === 'manager') {
+      return messages.filter(m => 
+        m.recipient_user_id === user.user_id || 
+        m.recipient_email === (user.email || '').toLowerCase() ||
+        ['cashier', 'merchandiser'].includes(m.recipient_role)
+      );
+    }
+
+    // Cashiers and Merchandisers only see messages addressed to them
     return messages.filter(m => {
       if (m.recipient_user_id && m.recipient_user_id === user.user_id) return true;
       if (m.recipient_email && m.recipient_email === (user.email || '').toLowerCase()) return true;
@@ -118,11 +141,26 @@ const emailService = {
 
   async markAsRead(messageId, userId) {
     const messages = await dataStore.read('inbox_messages');
-    const msg = messages.find(m => m.id === messageId && (m.recipient_user_id === userId || !m.recipient_user_id));
+    const msg = messages.find(m => m.id === messageId);
     if (msg) {
       msg.read = true;
       await dataStore.write('inbox_messages', messages);
     }
+  },
+
+  async deleteMessage(messageId, user) {
+    const messages = await dataStore.read('inbox_messages');
+    const index = messages.findIndex(m => m.id === messageId);
+    if (index === -1) return false;
+
+    const msg = messages[index];
+    // Admins can delete any message. Other users can only delete their own.
+    if (user.role === 'admin' || msg.recipient_user_id === user.user_id || msg.recipient_email === (user.email || '').toLowerCase()) {
+      messages.splice(index, 1);
+      await dataStore.write('inbox_messages', messages);
+      return true;
+    }
+    return false;
   }
 };
 
