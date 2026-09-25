@@ -5,7 +5,7 @@
 
 # NPRT63 - CONNECT Retail Inventory & Sales Management System
 
-### 🌐 Live Deployed App: [CONNECT](YOUR_DEPLOYED_APP_URL)
+### 🌐 Live Deployed App: [CONNECT](https://connect-516x.onrender.com)
 
 ## Overview
 
