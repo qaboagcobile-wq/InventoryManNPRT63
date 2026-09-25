@@ -3,9 +3,14 @@
 [![Code License](https://img.shields.io/badge/Code%20License-GPLv2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Follow%20%40iammelvink-blue.svg?style=social&logo=linkedin)](https://www.linkedin.com/in/iammelvink)
 
+# NPRT63 - CONNECT Retail Inventory & Sales Management System
+
+### 🌐 Live Deployed App: [CONNECT](YOUR_DEPLOYED_APP_URL)
+
 ## Overview
 
-**Connect** is a reusable, full-stack retail management web application designed according to the **Connect System Design Specification (Version 3.2)**. The initial store configuration is **Particles Electronics**, but the platform is retailer-agnostic.
+**Connect** is a reusable, full-stack retail management web application designed according to the **Connect System Design Specification (Version 3.2)**.
+
 
 The system connects stockroom inventory, sales floor replenishment, cashier point-of-sale transactions, and branch operational management into a single, cohesive dark-mode platform.
 
