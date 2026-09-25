@@ -50,6 +50,18 @@ router.post('/login', async (req, res) => {
     branch = await dataStore.find('branches', b => b.branch_id === assignment.branch_id);
   }
 
+  // Resolve store name for this user
+  let storeName = null;
+  if (branch) {
+    const store = await dataStore.find('stores', s => s.store_id === branch.store_id);
+    if (store) storeName = store.store_name;
+  }
+  if (!storeName) {
+    // Fallback: first store in the system
+    const stores = await dataStore.read('stores');
+    if (stores.length > 0) storeName = stores[0].store_name;
+  }
+
   const token = generateToken(user, assignment);
 
   res.cookie('token', token, { httpOnly: true, maxAge: 12 * 3600 * 1000 });
@@ -66,7 +78,8 @@ router.post('/login', async (req, res) => {
       firstLoginRequired: user.first_login_required,
       branchId: assignment ? assignment.branch_id : null,
       branchName: branch ? branch.branch_name : null,
-      branchNumber: branch ? branch.branch_number : null
+      branchNumber: branch ? branch.branch_number : null,
+      storeName: storeName
     }
   });
 });
@@ -165,6 +178,13 @@ router.get('/me', authenticate, async (req, res) => {
     }
   }
 
+  // Fallback store name if no branch assignment
+  let storeName = store ? store.store_name : null;
+  if (!storeName) {
+    const stores = await dataStore.read('stores');
+    if (stores.length > 0) storeName = stores[0].store_name;
+  }
+
   res.json({
     user: {
       userId: req.user.user_id,
@@ -177,7 +197,7 @@ router.get('/me', authenticate, async (req, res) => {
       branchId: assignment ? assignment.branch_id : null,
       branchName: branch ? branch.branch_name : null,
       branchNumber: branch ? branch.branch_number : null,
-      storeName: store ? store.store_name : 'Particles Electronics'
+      storeName: storeName
     }
   });
 });
