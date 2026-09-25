@@ -218,9 +218,16 @@ router.put('/profile', authenticate, async (req, res) => {
   res.json({ success: true, user: updated, message: 'Profile updated successfully' });
 });
 
-// GET /api/auth/notifications (Dev helper to view simulated emails)
-router.get('/notifications', (req, res) => {
-  res.json(emailService.getRecentEmails());
+// GET /api/auth/inbox (Role-based private inbox for authenticated user)
+router.get('/inbox', authenticate, async (req, res) => {
+  const messages = await emailService.getUserMessages(req.user);
+  res.json(messages);
+});
+
+// POST /api/auth/inbox/:id/read
+router.post('/inbox/:id/read', authenticate, async (req, res) => {
+  await emailService.markAsRead(req.params.id, req.user.user_id);
+  res.json({ success: true });
 });
 
 // POST /api/auth/logout

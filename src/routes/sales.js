@@ -64,6 +64,13 @@ router.post('/', authenticate, requireRole(['cashier', 'manager', 'admin']), asy
   }
   await dataStore.write('products', products);
 
+  // Payment type and Lay-by processing
+  const paymentType = req.body.paymentType === 'layby' ? 'layby' : 'full';
+  const customerName = req.body.customerName || customerRef || 'Walk-in Customer';
+  const customerPhone = req.body.customerPhone || '';
+  const depositAmount = paymentType === 'layby' ? Math.max(0, Number(req.body.depositAmount) || 0) : totalAmount;
+  const balanceDue = Math.max(0, totalAmount - depositAmount);
+
   // 3. Record Sale header (FR-41)
   const saleId = `sale-${Date.now()}`;
   const saleRecord = {
@@ -71,10 +78,15 @@ router.post('/', authenticate, requireRole(['cashier', 'manager', 'admin']), asy
     branch_id: branchId,
     cashier_user_id: req.user.user_id,
     cashier_name: req.user.full_name,
-    customer_ref: customerRef || 'Walk-in Customer',
+    customer_ref: customerName,
+    customer_phone: customerPhone,
     sale_date: now,
     total_amount: totalAmount,
-    total_units: verifiedItems.reduce((acc, i) => acc + i.quantity, 0)
+    total_units: verifiedItems.reduce((acc, i) => acc + i.quantity, 0),
+    payment_type: paymentType,
+    deposit_amount: depositAmount,
+    balance_due: balanceDue,
+    status: (paymentType === 'layby' && balanceDue > 0) ? 'LAYBY_ACTIVE' : 'COMPLETED'
   };
   await dataStore.insert('sales', saleRecord);
 

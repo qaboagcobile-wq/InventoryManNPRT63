@@ -120,6 +120,24 @@ router.get('/dashboard-kpis', authenticate, requireRole(['manager', 'admin', 'su
     activeStaffCount = users.filter(u => u.active).length;
   }
 
+  // 7-Day Daily Sales Trend
+  const last7Days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    last7Days.push({ date: dateStr, dayName: d.toLocaleDateString('en-US', { weekday: 'short' }), revenue: 0, units: 0 });
+  }
+
+  for (const s of scopedSales) {
+    const sDate = (s.sale_date || '').split('T')[0];
+    const match = last7Days.find(d => d.date === sDate);
+    if (match) {
+      match.revenue += Number(s.total_amount) || 0;
+      match.units += Number(s.total_units) || 0;
+    }
+  }
+
   res.json({
     kpis: {
       totalSalesValue,
@@ -136,7 +154,8 @@ router.get('/dashboard-kpis', authenticate, requireRole(['manager', 'admin', 'su
       activeStaffCount
     },
     topProducts,
-    salesByCashier
+    salesByCashier,
+    dailySalesTrend: last7Days
   });
 });
 

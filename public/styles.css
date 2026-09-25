@@ -428,38 +428,130 @@ tr:hover td {
 .badge-sky { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
 .badge-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
 
-/* Quick Switch Banner */
-.demo-banner {
-  background: #1e293b;
-  border-bottom: 1px solid var(--border);
-  padding: 6px 1rem;
-  font-size: 0.8rem;
+/* Role Cards Grid on Landing */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  max-width: 1050px;
+  margin: 2rem 0;
+}
+.role-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  overflow-x: auto;
-}
-.demo-banner span {
-  color: var(--text-muted);
-}
-.demo-accounts {
-  display: flex;
   gap: 8px;
 }
-.demo-btn {
-  background: rgba(56, 189, 248, 0.1);
-  color: var(--accent);
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  cursor: pointer;
-  white-space: nowrap;
+.role-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  background: var(--bg-hover);
 }
-.demo-btn:hover {
+.role-card .role-icon {
+  font-size: 2rem;
+}
+.role-card h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+.role-card p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+/* Payment Type Toggle Pills for Cashier Lay-by */
+.payment-toggle {
+  display: flex;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 1rem;
+}
+.payment-pill {
+  flex: 1;
+  text-align: center;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-muted);
+  border: none;
+  background: transparent;
+  transition: all 0.2s;
+}
+.payment-pill.active {
   background: var(--accent);
   color: #0b0f19;
+}
+
+/* Revenue Chart Card */
+.chart-container {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  height: 160px;
+  gap: 16px;
+  padding-top: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.chart-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+.chart-bar-fill {
+  width: 100%;
+  max-width: 48px;
+  background: linear-gradient(180deg, #38bdf8 0%, #1e40af 100%);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.5s ease;
+  min-height: 4px;
+}
+.chart-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+.chart-val {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+/* Export Buttons */
+.export-btn-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 /* Toast Alerts */
@@ -500,4 +592,5 @@ tr:hover td {
   .hero h2 { font-size: 2rem; }
   .kpi-grid { grid-template-columns: 1fr; }
   .tabs-nav { flex-wrap: nowrap; overflow-x: auto; }
+  .role-grid { grid-template-columns: 1fr 1fr; }
 }

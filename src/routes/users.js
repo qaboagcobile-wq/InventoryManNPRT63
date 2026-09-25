@@ -256,59 +256,147 @@ router.post('/staff', authenticate, async (req, res) => {
   });
 });
 
-// DELETE /api/users/:id
-router.delete('/:id', authenticate, async (req, res) => {
-  const targetId = req.params.id;
-  const targetUser = await dataStore.find('users', u => u.user_id === targetId);
-
-  if (!targetUser) {
-    return res.status(404).json({ error: 'User not found' });
-  }
-
-  // FR-10: Admin accounts cannot be deleted by any user, including other Admins
-  if (targetUser.role === 'admin') {
-    return res.status(403).json({ error: 'Admin accounts cannot be deleted by any user' });
-  }
-
-  // Admin permissions (FR-08, FR-09)
-  if (req.user.role === 'admin') {
-    if (targetUser.role !== 'super_manager') {
-      return res.status(403).json({ error: 'Admins can only delete the Super Manager account' });
+  // Helper function to check authority
+  function checkManagementAuthority(caller, target, callerAssign, targetAssign) {
+    if (target.role === 'admin') {
+      return { allowed: false, message: 'Admin accounts cannot be modified or deleted by any user' };
     }
+    if (caller.role === 'admin') {
+      if (target.role !== 'super_manager') {
+        return { allowed: false, message: 'Admins can only manage the Super Manager account' };
+      }
+      return { allowed: true };
+    }
+    if (caller.role === 'super_manager') {
+      if (target.role !== 'manager') {
+        return { allowed: false, message: 'Super Manager can only manage Branch Manager accounts' };
+      }
+      return { allowed: true };
+    }
+    if (caller.role === 'manager') {
+      if (!['cashier', 'merchandiser'].includes(target.role)) {
+        return { allowed: false, message: 'Managers can only manage Cashier and Merchandiser accounts' };
+      }
+      if (!callerAssign || !targetAssign || callerAssign.branch_id !== targetAssign.branch_id) {
+        return { allowed: false, message: 'You can only manage staff within your own assigned branch' };
+      }
+      return { allowed: true };
+    }
+    return { allowed: false, message: 'Insufficient permissions' };
   }
 
-  // Super Manager permissions (FR-15, FR-16)
-  if (req.user.role === 'super_manager') {
-    if (targetUser.role !== 'manager') {
-      return res.status(403).json({ error: 'Super Manager can only delete Manager accounts' });
-    }
-  }
+  // POST /api/users/:id/activate
+  router.post('/:id/activate', authenticate, async (req, res) => {
+    const targetId = req.params.id;
+    const targetUser = await dataStore.find('users', u => u.user_id === targetId);
+    if (!targetUser) return res.status(404).json({ error: 'User not found' });
 
-  // Manager permissions (FR-23, FR-24)
-  if (req.user.role === 'manager') {
-    if (!['cashier', 'merchandiser'].includes(targetUser.role)) {
-      return res.status(403).json({ error: 'Managers can only deactivate Cashier and Merchandiser accounts in their branch' });
-    }
-    // Verify branch isolation
-    const callerAssign = await dataStore.find('user_branch_assignments', a => a.user_id === req.user.user_id && a.active);
-    const targetAssign = await dataStore.find('user_branch_assignments', a => a.user_id === targetUser.user_id && a.active);
-    if (!callerAssign || !targetAssign || callerAssign.branch_id !== targetAssign.branch_id) {
-      return res.status(403).json({ error: 'You can only deactivate staff within your own branch' });
-    }
-  }
+    const callerAssign = await dataStore.find('user_branch_assignments', a => a.user_id === req.user.user_id);
+    const targetAssign = await dataStore.find('user_branch_assignments', a => a.user_id === targetUser.user_id);
+    const authCheck = checkManagementAuthority(req.user, targetUser, callerAssign, targetAssign);
+    if (!authCheck.allowed) return res.status(403).json({ error: authCheck.message });
 
-  // Soft delete / deactivate user
-  await dataStore.update('users', u => u.user_id === targetId, {
-    active: false,
-    updated_at: new Date().toISOString()
+    await dataStore.update('users', u => u.user_id === targetId, {
+      active: true,
+      updated_at: new Date().toISOString()
+    });
+
+    // Re-activate branch assignment
+    const assignments = await dataStore.read('user_branch_assignments');
+    const updatedAssignments = assignments.map(a => a.user_id === targetId ? { ...a, active: true } : a);
+    await dataStore.write('user_branch_assignments', updatedAssignments);
+
+    res.json({ success: true, message: `Account for ${targetUser.full_name} (${targetUser.role}) has been activated.` });
   });
 
-  // Deactivate assignments
-  const assignments = await dataStore.read('user_branch_assignments');
-  const updatedAssignments = assignments.map(a => a.user_id === targetId ? { ...a, active: false } : a);
-  await dataStore.write('user_branch_assignments', updatedAssignments);
+  // POST /api/users/:id/deactivate
+  router.post('/:id/deactivate', authenticate, async (req, res) => {
+    const targetId = req.params.id;
+    const targetUser = await dataStore.find('users', u => u.user_id === targetId);
+    if (!targetUser) return res.status(404).json({ error: 'User not found' });
 
-  res.json({ success: true, message: `Account for ${targetUser.full_name} (${targetUser.role}) has been deactivated.` });
-});
+    const callerAssign = await dataStore.find('user_branch_assignments', a => a.user_id === req.user.user_id);
+    const targetAssign = await dataStore.find('user_branch_assignments', a => a.user_id === targetUser.user_id);
+    const authCheck = checkManagementAuthority(req.user, targetUser, callerAssign, targetAssign);
+    if (!authCheck.allowed) return res.status(403).json({ error: authCheck.message });
+
+    await dataStore.update('users', u => u.user_id === targetId, {
+      active: false,
+      updated_at: new Date().toISOString()
+    });
+
+    const assignments = await dataStore.read('user_branch_assignments');
+    const updatedAssignments = assignments.map(a => a.user_id === targetId ? { ...a, active: false } : a);
+    await dataStore.write('user_branch_assignments', updatedAssignments);
+
+    res.json({ success: true, message: `Account for ${targetUser.full_name} (${targetUser.role}) has been deactivated.` });
+  });
+
+  // POST /api/users/:id/delete (Requires text reason)
+  router.post('/:id/delete', authenticate, async (req, res) => {
+    const targetId = req.params.id;
+    const { reason } = req.body;
+
+    if (!reason || !reason.trim()) {
+      return res.status(400).json({ error: 'A specific text reason is required to delete this account.' });
+    }
+
+    const targetUser = await dataStore.find('users', u => u.user_id === targetId);
+    if (!targetUser) return res.status(404).json({ error: 'User not found' });
+
+    const callerAssign = await dataStore.find('user_branch_assignments', a => a.user_id === req.user.user_id);
+    const targetAssign = await dataStore.find('user_branch_assignments', a => a.user_id === targetUser.user_id);
+    const authCheck = checkManagementAuthority(req.user, targetUser, callerAssign, targetAssign);
+    if (!authCheck.allowed) return res.status(403).json({ error: authCheck.message });
+
+    const now = new Date().toISOString();
+
+    // Log deletion event to audit trail
+    const auditEvents = await dataStore.read('user_lifecycle_events') || [];
+    auditEvents.push({
+      event_id: `del-${Date.now()}`,
+      action: 'DELETE',
+      target_user_id: targetId,
+      target_name: targetUser.full_name,
+      target_role: targetUser.role,
+      performed_by_id: req.user.user_id,
+      performed_by_name: req.user.full_name,
+      reason: reason.trim(),
+      timestamp: now
+    });
+    await dataStore.write('user_lifecycle_events', auditEvents);
+
+    // Remove user record
+    await dataStore.delete('users', u => u.user_id === targetId);
+    // Remove assignments
+    const assignments = await dataStore.read('user_branch_assignments');
+    await dataStore.write('user_branch_assignments', assignments.filter(a => a.user_id !== targetId));
+
+    res.json({
+      success: true,
+      message: `Account for ${targetUser.full_name} (${targetUser.role}) has been permanently deleted. Reason: "${reason.trim()}".`
+    });
+  });
+
+  // DELETE /api/users/:id (Maintains compatibility)
+  router.delete('/:id', authenticate, async (req, res) => {
+    const reason = (req.body && req.body.reason) || req.query.reason || 'Requested by manager/admin';
+    const targetId = req.params.id;
+    const targetUser = await dataStore.find('users', u => u.user_id === targetId);
+
+    if (!targetUser) return res.status(404).json({ error: 'User not found' });
+
+    const callerAssign = await dataStore.find('user_branch_assignments', a => a.user_id === req.user.user_id);
+    const targetAssign = await dataStore.find('user_branch_assignments', a => a.user_id === targetUser.user_id);
+    const authCheck = checkManagementAuthority(req.user, targetUser, callerAssign, targetAssign);
+    if (!authCheck.allowed) return res.status(403).json({ error: authCheck.message });
+
+    await dataStore.update('users', u => u.user_id === targetId, {
+      active: false,
+      updated_at: new Date().toISOString()
+    });
+
+    res.json({ success: true, message: `Account for ${targetUser.full_name} (${targetUser.role}) has been deactivated.` });
+  });
 
 module.exports = router;

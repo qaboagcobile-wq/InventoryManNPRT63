@@ -9,34 +9,21 @@
 </head>
 <body>
 
-  <!-- Top Demo Switcher Banner for Quick Testing -->
-  <div class="demo-banner">
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <span style="font-weight: 600; color: #fff;">⚡ Quick-Test Accounts:</span>
-      <span style="font-size: 0.75rem;">(Initial password: <code>particles2026</code>)</span>
-    </div>
-    <div class="demo-accounts">
-      <button class="demo-btn" onclick="app.quickFillLogin('aqabo@gmail.com', 'particles2026', 'admin')">Admin: Agcobile</button>
-      <button class="demo-btn" onclick="app.quickFillLogin('smathonsi@gmail.com', 'particles2026', 'admin')">Admin: Sibusiso</button>
-      <button class="demo-btn" onclick="app.openNotificationsModal()">📬 Dev Inbox (<span id="inbox-count">0</span>)</button>
-    </div>
-  </div>
-
   <!-- Header -->
   <header>
     <div class="container nav-bar">
       <div class="brand-group" onclick="app.showLandingOrDashboard()">
         <div class="logo-badge">CONNECT</div>
         <div class="brand-text">
-          <h1 id="header-store-name">Particles Electronics</h1>
-          <span>Retail Inventory & Sales System</span>
+          <h1 id="header-app-name">CONNECT</h1>
+          <span id="header-store-subtitle">Retail Inventory & Sales System</span>
         </div>
       </div>
 
       <div class="nav-actions">
         <!-- Unauthenticated -->
         <div id="nav-unauth">
-          <button class="btn btn-primary" onclick="app.openLoginModal()">Log In</button>
+          <button class="btn btn-primary" onclick="app.openLoginModal('admin')">Sign In</button>
         </div>
 
         <!-- Authenticated -->
@@ -44,10 +31,12 @@
           <div style="text-align: right; line-height: 1.2;">
             <div id="user-display-name" style="font-weight: 600; font-size: 0.9rem;"></div>
             <div style="display: flex; gap: 6px; justify-content: flex-end; align-items: center; margin-top: 2px;">
+              <span id="user-store-badge" class="badge badge-emerald" style="display: none;"></span>
               <span id="user-role-badge" class="badge badge-sky"></span>
               <span id="user-branch-badge" class="badge badge-purple" style="display: none;"></span>
             </div>
           </div>
+          <button class="btn btn-secondary btn-sm" onclick="app.openInboxModal()" title="View notifications">📬 Inbox (<span id="inbox-count">0</span>)</button>
           <button class="btn btn-secondary btn-sm" onclick="app.openProfileModal()" title="Profile & Password">⚙️ Settings</button>
           <button class="btn btn-danger btn-sm" onclick="app.logout()">Log Out</button>
         </div>
@@ -61,33 +50,72 @@
     <!-- LANDING PAGE VIEW (FR-01, FR-02) -->
     <div id="landing-view">
       <section class="hero">
-        <div class="hero-tag">Generic Retail Platform • Initial Store: Particles Electronics</div>
+        <div class="hero-tag">Generic Multi-Store Retail Platform</div>
         <h2>Connect your stock, floor and sales in one place.</h2>
-        <p>A high-performance retail management web application connecting stockroom inventory, sales floor replenishment, cashier POS transactions, and executive KPIs.</p>
-        <div>
-          <button class="btn btn-primary" style="padding: 0.8rem 2.2rem; font-size: 1.1rem;" onclick="app.openLoginModal()">Log In to Connect</button>
+        <p>A unified retail operations platform connecting stockroom inventory, floor replenishment, cashier POS checkout, and branch performance metrics.</p>
+        
+        <!-- Role Selection Cards -->
+        <div style="margin-top: 1.5rem; width: 100%; display: flex; flex-direction: column; align-items: center;">
+          <h3 style="font-size: 1.1rem; color: var(--accent); margin-bottom: 0.5rem; font-weight: 600;">Select your role to sign in:</h3>
+          
+          <div class="role-grid">
+            <div class="role-card" onclick="app.openLoginModal('admin')">
+              <div class="role-icon">🛡️</div>
+              <h4>Platform Admin</h4>
+              <p>Store creation, branch provisioning & platform oversight.</p>
+              <span class="badge badge-sky">Email Login</span>
+            </div>
+
+            <div class="role-card" onclick="app.openLoginModal('super_manager')">
+              <div class="role-icon">👔</div>
+              <h4>Super Manager</h4>
+              <p>Platform-wide manager creation & multi-branch supervision.</p>
+              <span class="badge badge-purple">Employee ID</span>
+            </div>
+
+            <div class="role-card" onclick="app.openLoginModal('manager')">
+              <div class="role-icon">🏢</div>
+              <h4>Branch Manager</h4>
+              <p>Inventory, staff, receiving, KPIs & branch transaction reports.</p>
+              <span class="badge badge-emerald">Employee ID</span>
+            </div>
+
+            <div class="role-card" onclick="app.openLoginModal('cashier')">
+              <div class="role-icon">🛒</div>
+              <h4>Cashier POS</h4>
+              <p>Barcode scanning, SKU search, lay-by & instant checkout.</p>
+              <span class="badge badge-amber">Employee ID</span>
+            </div>
+
+            <div class="role-card" onclick="app.openLoginModal('merchandiser')">
+              <div class="role-icon">📦</div>
+              <h4>Merchandiser</h4>
+              <p>Stockroom-to-floor transfers & replenishment alerts.</p>
+              <span class="badge badge-sky">Employee ID</span>
+            </div>
+          </div>
         </div>
 
         <div class="hero-feature-grid">
           <div class="feature-card">
-            <div class="feature-icon">📦</div>
-            <h3>Stockroom & Floor Sync</h3>
-            <p>Distinguish stockroom reserves from floor inventory with strict validation to prevent stock discrepancies.</p>
+            <div class="feature-icon">🏬</div>
+            <h3>Multi-Store & Branches</h3>
+            <p>Administer distinct retail chains and branch networks with strict branch data isolation.</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">⚡</div>
-            <h3>High-Speed POS & Barcodes</h3>
-            <p>Cashier checkout with live stock-on-hand search, 6-digit SKU lookup, barcode scanning, and instant floor deduction.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🛡️</div>
-            <h3>Hierarchical Access Control</h3>
-            <p>Role-scoped authority from Admin, Super Manager, Branch Manager, down to Merchandisers and Cashiers.</p>
+            <h3>POS & Lay-by Deposits</h3>
+            <p>Cashier checkout supporting both immediate sales and layaway deposit balances.</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">📊</div>
-            <h3>Real-time Manager KPIs</h3>
-            <p>Track sales revenue, top performers, low-stock thresholds, and auditable transaction movements at a glance.</p>
+            <h3>Manager CSV Exports</h3>
+            <p>1-click download of stock on hand, movement transactions, and cumulative sales.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Role-Scoped Security</h3>
+            <p>Full lifecycle controls: activate, deactivate, or delete accounts with mandatory audit reasons.</p>
           </div>
         </div>
       </section>
@@ -95,12 +123,13 @@
 
     <!-- ADMIN CONSOLE VIEW -->
     <div id="admin-view" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
         <div>
           <h2 style="font-size: 1.6rem; font-weight: 700;">Platform Administration</h2>
-          <p style="color: var(--text-muted); font-size: 0.9rem;">Manage stores, create branches, and provision the platform Super Manager.</p>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Manage retail stores, branches, and platform Super Manager accounts.</p>
         </div>
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="app.openCreateStoreModal()">+ Add Store</button>
           <button class="btn btn-primary btn-sm" onclick="app.openCreateBranchModal()">+ Add Branch</button>
           <button class="btn btn-success btn-sm" onclick="app.openCreateSuperManagerModal()">+ Create Super Manager</button>
         </div>
@@ -109,10 +138,30 @@
       <div class="tabs-nav">
         <button class="tab-btn active" onclick="app.switchAdminTab('stores')">Stores & Branches</button>
         <button class="tab-btn" onclick="app.switchAdminTab('users')">System Accounts</button>
+        <button class="tab-btn" onclick="app.switchAdminTab('audit')">Lifecycle Audit Log</button>
       </div>
 
       <!-- Admin Tab: Stores & Branches -->
       <div id="admin-tab-stores">
+        <div style="margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Retail Chains / Stores</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Store ID</th>
+                  <th>Store Name</th>
+                  <th>Slogan</th>
+                  <th>Currency</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody id="admin-stores-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Configured Branches</h3>
         <div class="table-wrapper">
           <table>
             <thead>
@@ -124,9 +173,7 @@
                 <th>Created</th>
               </tr>
             </thead>
-            <tbody id="admin-branches-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
+            <tbody id="admin-branches-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -146,9 +193,26 @@
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="admin-users-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
+            <tbody id="admin-users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Tab: Audit Log -->
+      <div id="admin-tab-audit" style="display: none;">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date / Time</th>
+                <th>Action</th>
+                <th>Target Account</th>
+                <th>Role</th>
+                <th>Performed By</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody id="admin-audit-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -156,10 +220,10 @@
 
     <!-- SUPER MANAGER VIEW -->
     <div id="super-manager-view" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
         <div>
           <h2 style="font-size: 1.6rem; font-weight: 700;">Super Manager Console</h2>
-          <p style="color: var(--text-muted); font-size: 0.9rem;">Create, assign, and manage Branch Manager accounts across all retail locations.</p>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Create, assign, activate, deactivate, and delete Branch Manager accounts.</p>
         </div>
         <button class="btn btn-primary btn-sm" onclick="app.openCreateManagerModal()">+ Add Branch Manager</button>
       </div>
@@ -177,21 +241,19 @@
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="sm-managers-tbody">
-            <!-- Rendered via JS -->
-          </tbody>
+          <tbody id="sm-managers-tbody"></tbody>
         </table>
       </div>
     </div>
 
     <!-- MANAGER DASHBOARD VIEW (7 TABS: Section 7, FR-43) -->
     <div id="manager-view" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
         <div>
           <h2 style="font-size: 1.6rem; font-weight: 700;">Branch Operations & KPIs</h2>
           <p id="manager-branch-label" style="color: var(--text-muted); font-size: 0.9rem;"></p>
         </div>
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
           <button class="btn btn-secondary btn-sm" onclick="app.openAddStaffModal()">+ Add Staff</button>
           <button class="btn btn-primary btn-sm" onclick="app.openReceiveStockModal()">📥 Receive Stock</button>
         </div>
@@ -199,17 +261,18 @@
 
       <!-- Tabs Navigation -->
       <div class="tabs-nav">
-        <button class="tab-btn active" onclick="app.switchManagerTab('overview')">Overview</button>
-        <button class="tab-btn" onclick="app.switchManagerTab('sales')">Sales</button>
-        <button class="tab-btn" onclick="app.switchManagerTab('products')">Products</button>
+        <button class="tab-btn active" onclick="app.switchManagerTab('overview')">Overview & KPIs</button>
+        <button class="tab-btn" onclick="app.switchManagerTab('sales')">Sales & Cumulatives</button>
+        <button class="tab-btn" onclick="app.switchManagerTab('products')">Products & Stock</button>
         <button class="tab-btn" onclick="app.switchManagerTab('stockroom')">Stockroom</button>
         <button class="tab-btn" onclick="app.switchManagerTab('floor')">Floor</button>
-        <button class="tab-btn" onclick="app.switchManagerTab('staff')">Staff</button>
-        <button class="tab-btn" onclick="app.switchManagerTab('transactions')">Transactions</button>
+        <button class="tab-btn" onclick="app.switchManagerTab('staff')">Staff Management</button>
+        <button class="tab-btn" onclick="app.switchManagerTab('transactions')">Stock Movements</button>
       </div>
 
       <!-- Tab 1: Overview -->
       <div id="mgr-tab-overview">
+        <!-- KPI Cards -->
         <div class="kpi-grid">
           <div class="kpi-card">
             <div class="kpi-label">Total Sales Value</div>
@@ -243,6 +306,23 @@
           </div>
         </div>
 
+        <!-- 7-Day Revenue Trend Visual Chart -->
+        <div class="chart-container">
+          <div class="chart-header">
+            <div>
+              <h3 style="font-size: 1.1rem; font-weight: 700;">📈 7-Day Revenue Trend</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted);">Daily sales revenue performance for this branch</p>
+            </div>
+            <div class="export-btn-group">
+              <button class="btn btn-secondary btn-sm" onclick="app.downloadSalesCSV()">📥 Download Sales Summary (CSV)</button>
+              <button class="btn btn-secondary btn-sm" onclick="app.downloadStockOnHandCSV()">📥 Download Stock on Hand (CSV)</button>
+            </div>
+          </div>
+          <div class="chart-bars" id="revenue-trend-bars">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.5rem;">
           <!-- Top Selling Products -->
           <div class="feature-card" style="padding: 1.25rem;">
@@ -256,9 +336,7 @@
                     <th>Revenue</th>
                   </tr>
                 </thead>
-                <tbody id="mgr-top-products-tbody">
-                  <!-- Rendered via JS -->
-                </tbody>
+                <tbody id="mgr-top-products-tbody"></tbody>
               </table>
             </div>
           </div>
@@ -275,9 +353,7 @@
                     <th>Revenue</th>
                   </tr>
                 </thead>
-                <tbody id="mgr-cashier-perf-tbody">
-                  <!-- Rendered via JS -->
-                </tbody>
+                <tbody id="mgr-cashier-perf-tbody"></tbody>
               </table>
             </div>
           </div>
@@ -286,9 +362,12 @@
 
       <!-- Tab 2: Sales -->
       <div id="mgr-tab-sales" style="display: none;">
-        <div style="display: flex; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap;">
-          <input type="date" id="filter-sales-date" class="form-control" style="width: auto;" onchange="app.loadSalesList()">
-          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('filter-sales-date').value=''; app.loadSalesList();">Clear Date</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <input type="date" id="filter-sales-date" class="form-control" style="width: auto;" onchange="app.loadSalesList()">
+            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('filter-sales-date').value=''; app.loadSalesList();">Clear Date</button>
+          </div>
+          <button class="btn btn-success btn-sm" onclick="app.downloadSalesCSV()">📥 Download Cumulative Sales (CSV)</button>
         </div>
         <div class="table-wrapper">
           <table>
@@ -297,14 +376,14 @@
                 <th>Sale ID</th>
                 <th>Date / Time</th>
                 <th>Cashier</th>
-                <th>Items Summary</th>
-                <th>Total Units</th>
-                <th>Total Amount</th>
+                <th>Type</th>
+                <th>Customer</th>
+                <th>Units</th>
+                <th>Deposit</th>
+                <th>Total</th>
               </tr>
             </thead>
-            <tbody id="mgr-sales-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
+            <tbody id="mgr-sales-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -312,13 +391,14 @@
       <!-- Tab 3: Products -->
       <div id="mgr-tab-products" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
-          <div style="display: flex; gap: 10px;">
-            <input type="text" id="filter-products-search" class="form-control" placeholder="Search name, brand, SKU..." style="width: 250px;" oninput="app.loadProductsList()">
-            <select id="filter-products-category" class="form-control" style="width: 180px;" onchange="app.loadProductsList()">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <input type="text" id="filter-products-search" class="form-control" placeholder="Search name, brand, SKU..." style="width: 240px;" oninput="app.loadProductsList()">
+            <select id="filter-products-category" class="form-control" style="width: 170px;" onchange="app.loadProductsList()">
               <option value="">All Categories</option>
             </select>
           </div>
-          <div style="display: flex; gap: 8px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="app.downloadStockOnHandCSV()">📥 Export Stock on Hand (CSV)</button>
             <button class="btn btn-secondary btn-sm" onclick="app.openAddCategoryModal()">+ Category</button>
             <button class="btn btn-primary btn-sm" onclick="app.openAddProductModal()">+ Add Product</button>
           </div>
@@ -331,25 +411,26 @@
                 <th>Product & Brand</th>
                 <th>Category</th>
                 <th>Price</th>
-                <th>Floor Stock</th>
+                <th>Floor</th>
                 <th>Stockroom</th>
                 <th>Total</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="mgr-products-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
+            <tbody id="mgr-products-tbody"></tbody>
           </table>
         </div>
       </div>
 
       <!-- Tab 4: Stockroom -->
       <div id="mgr-tab-stockroom" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
           <p style="color: var(--text-muted); font-size: 0.9rem;">Branch Stockroom inventory currently waiting to be moved to the sales floor.</p>
-          <button class="btn btn-primary btn-sm" onclick="app.openReceiveStockModal()">📥 Receive New Stock</button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary btn-sm" onclick="app.downloadStockOnHandCSV()">📥 Export Stockroom (CSV)</button>
+            <button class="btn btn-primary btn-sm" onclick="app.openReceiveStockModal()">📥 Receive New Stock</button>
+          </div>
         </div>
         <div class="table-wrapper">
           <table>
@@ -362,9 +443,7 @@
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody id="mgr-stockroom-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
+            <tbody id="mgr-stockroom-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -383,18 +462,16 @@
                 <th>Status</th>
               </tr>
             </thead>
-            <tbody id="mgr-floor-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
+            <tbody id="mgr-floor-tbody"></tbody>
           </table>
         </div>
       </div>
 
       <!-- Tab 6: Staff -->
       <div id="mgr-tab-staff" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
           <p style="color: var(--text-muted); font-size: 0.9rem;">Assigned staff for this branch (Cashiers and Merchandisers).</p>
-          <button class="btn btn-primary btn-sm" onclick="app.openAddStaffModal()">+ Add Cashier / Merchandiser</button>
+          <button class="btn btn-primary btn-sm" onclick="app.openAddStaffModal()">+ Add Staff</button>
         </div>
         <div class="table-wrapper">
           <table>
@@ -409,15 +486,17 @@
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="mgr-staff-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
+            <tbody id="mgr-staff-tbody"></tbody>
           </table>
         </div>
       </div>
 
       <!-- Tab 7: Transactions -->
       <div id="mgr-tab-transactions" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Full immutable audit trail of stock receipts, transfers, and sales.</p>
+          <button class="btn btn-success btn-sm" onclick="app.downloadTransactionsCSV()">📥 Export Movements (CSV)</button>
+        </div>
         <div class="table-wrapper">
           <table>
             <thead>
@@ -431,9 +510,7 @@
                 <th>Notes</th>
               </tr>
             </thead>
-            <tbody id="mgr-transactions-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
+            <tbody id="mgr-transactions-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -441,19 +518,19 @@
 
     <!-- CASHIER POS VIEW (Section 5.6, FR-36 to FR-42) -->
     <div id="cashier-view" style="display: none;">
-      <div style="display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start;">
+      <div style="display: grid; grid-template-columns: 1fr 390px; gap: 1.5rem; align-items: start;">
         
         <!-- Left: Product Selection & Barcode Search -->
         <div>
           <div class="feature-card" style="margin-bottom: 1.5rem; padding: 1.25rem;">
-            <div style="display: flex; gap: 12px; margin-bottom: 1rem;">
-              <div style="flex: 1;">
+            <div style="display: flex; gap: 12px; margin-bottom: 0; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 220px;">
                 <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; display: block;">🔍 Search Product by 6-digit SKU or Name</label>
-                <input type="text" id="cashier-search-input" class="form-control" placeholder="Type SKU (e.g. 100001) or product name..." oninput="app.searchCashierProducts()">
+                <input type="text" id="cashier-search-input" class="form-control" placeholder="Search product name or SKU..." oninput="app.searchCashierProducts()">
               </div>
-              <div style="width: 240px;">
+              <div style="width: 220px;">
                 <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; display: block;">📷 Barcode Scanner</label>
-                <input type="text" id="cashier-barcode-input" class="form-control" placeholder="Scan or enter barcode..." onkeydown="if(event.key==='Enter') app.scanBarcode()">
+                <input type="text" id="cashier-barcode-input" class="form-control" placeholder="Scan barcode & press Enter" onkeydown="if(event.key==='Enter') app.scanBarcode()">
               </div>
             </div>
           </div>
@@ -471,9 +548,7 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody id="cashier-stock-tbody">
-                <!-- Rendered via JS -->
-              </tbody>
+              <tbody id="cashier-stock-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -481,32 +556,57 @@
         <!-- Right: Current Cart / Checkout Register -->
         <div class="feature-card" style="padding: 1.5rem; position: sticky; top: 90px;">
           <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
-            🛒 Current Sale Register
+            🛒 Sales Register
           </h3>
+
+          <!-- Payment Mode Selection (Full vs Lay-by) -->
+          <div class="payment-toggle">
+            <button type="button" class="payment-pill active" id="btn-pay-full" onclick="app.setPaymentType('full')">Full Payment</button>
+            <button type="button" class="payment-pill" id="btn-pay-layby" onclick="app.setPaymentType('layby')">Lay-by (Deposit)</button>
+          </div>
+
           <div id="cart-empty-msg" style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 2rem 0;">
             Cart is empty. Click "+ Add to Cart" on any floor item.
           </div>
-          <div id="cart-items-container" style="display: none; max-height: 300px; overflow-y: auto; margin-bottom: 1rem;">
-            <!-- Cart items list -->
-          </div>
+          <div id="cart-items-container" style="display: none; max-height: 250px; overflow-y: auto; margin-bottom: 1rem;"></div>
 
           <div id="cart-summary" style="border-top: 1px solid var(--border); padding-top: 1rem; display: none;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem;">
               <span style="color: var(--text-muted);">Total Items:</span>
               <strong id="cart-total-qty">0</strong>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 1.25rem; font-size: 1.3rem;">
-              <span>Total:</span>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 1.3rem;">
+              <span>Total Price:</span>
               <strong style="color: var(--accent);" id="cart-total-amount">R0.00</strong>
             </div>
 
-            <div class="form-group">
+            <!-- Lay-by Specific Fields -->
+            <div id="layby-fields" style="display: none; background: rgba(0,0,0,0.25); border: 1px dashed var(--accent); border-radius: 8px; padding: 12px; margin-bottom: 1rem;">
+              <div class="form-group" style="margin-bottom: 8px;">
+                <label>Customer Full Name *</label>
+                <input type="text" id="layby-customer-name" class="form-control" placeholder="Customer Name">
+              </div>
+              <div class="form-group" style="margin-bottom: 8px;">
+                <label>Customer Cell / ID *</label>
+                <input type="text" id="layby-customer-phone" class="form-control" placeholder="+27 82 000 0000">
+              </div>
+              <div class="form-group" style="margin-bottom: 8px;">
+                <label>Deposit Paid (ZAR) *</label>
+                <input type="number" id="layby-deposit-amount" class="form-control" min="1" step="1" placeholder="Deposit Amount" oninput="app.calcLaybyBalance()">
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-top: 6px;">
+                <span style="color: var(--warning);">Remaining Balance:</span>
+                <strong id="layby-balance-due" style="color: #fbbf24;">R0.00</strong>
+              </div>
+            </div>
+
+            <div class="form-group" id="regular-customer-group">
               <label>Customer Reference (Optional)</label>
               <input type="text" id="cart-customer-ref" class="form-control" placeholder="Walk-in Customer">
             </div>
 
             <button class="btn btn-success" style="width: 100%; padding: 0.75rem;" onclick="app.completeCashierSale()">
-              💳 Complete Sale & Deduct Stock
+              💳 Complete Transaction & Deduct Stock
             </button>
             <button class="btn btn-secondary btn-sm" style="width: 100%; margin-top: 8px;" onclick="app.clearCart()">
               Clear Cart
@@ -537,9 +637,7 @@
               <th>Transfer to Floor</th>
             </tr>
           </thead>
-          <tbody id="merchandiser-stock-tbody">
-            <!-- Rendered via JS -->
-          </tbody>
+          <tbody id="merchandiser-stock-tbody"></tbody>
         </table>
       </div>
     </div>
@@ -552,17 +650,23 @@
   <div id="login-modal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Connect Login</h3>
+        <h3 id="login-modal-title">Connect Sign In</h3>
         <button class="close-btn" onclick="app.closeModal('login-modal')">&times;</button>
       </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-        Admins log in using Email. Operational users (Super Manager, Manager, Cashier, Merchandiser) log in using their Employee Number.
-      </p>
 
-      <form onsubmit="app.handleLogin(event)">
+      <!-- Quick role switcher inside modal -->
+      <div style="display: flex; gap: 6px; margin-bottom: 1.25rem; overflow-x: auto; padding-bottom: 4px;">
+        <button type="button" class="btn btn-sm btn-secondary" id="pill-role-admin" onclick="app.setLoginRole('admin')">Admin</button>
+        <button type="button" class="btn btn-sm btn-secondary" id="pill-role-super_manager" onclick="app.setLoginRole('super_manager')">Super Mgr</button>
+        <button type="button" class="btn btn-sm btn-secondary" id="pill-role-manager" onclick="app.setLoginRole('manager')">Manager</button>
+        <button type="button" class="btn btn-sm btn-secondary" id="pill-role-cashier" onclick="app.setLoginRole('cashier')">Cashier</button>
+        <button type="button" class="btn btn-sm btn-secondary" id="pill-role-merchandiser" onclick="app.setLoginRole('merchandiser')">Merchandiser</button>
+      </div>
+
+      <form id="login-form" onsubmit="app.handleLogin(event)">
         <div class="form-group">
-          <label>Email or Employee Number</label>
-          <input type="text" id="login-identifier" class="form-control" placeholder="e.g. aqabo@gmail.com or MGR101" required>
+          <label id="login-identifier-label">Email Address</label>
+          <input type="text" id="login-identifier" class="form-control" required placeholder="Enter credentials">
         </div>
         <div class="form-group">
           <label>Password</label>
@@ -576,17 +680,287 @@
     </div>
   </div>
 
-  <!-- 2. Forced First Login Password Change Modal (FR-07, FR-13, FR-21, FR-55) -->
+  <!-- 2. Delete Reason Modal -->
+  <div id="delete-reason-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="border: 1px solid var(--danger);">
+      <div class="modal-header">
+        <h3 style="color: var(--danger);">Confirm Account Deletion</h3>
+        <button class="close-btn" onclick="app.closeModal('delete-reason-modal')">&times;</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        You are deleting: <strong id="delete-target-name" style="color: #fff;"></strong> (<span id="delete-target-role"></span>). Please provide a mandatory audit reason.
+      </p>
+      <form id="delete-reason-form" onsubmit="app.confirmDeleteUser(event)">
+        <div class="form-group">
+          <label>Specify Reason for Deletion *</label>
+          <textarea id="delete-reason-text" class="form-control" rows="3" required placeholder="State operational or disciplinary reason..."></textarea>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="app.closeModal('delete-reason-modal')">Cancel</button>
+          <button type="submit" class="btn btn-danger" style="flex: 1;">Delete Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Add Store Modal (Admin) -->
+  <div id="create-store-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Create Retail Store / Chain</h3>
+        <button class="close-btn" onclick="app.closeModal('create-store-modal')">&times;</button>
+      </div>
+      <form id="create-store-form" onsubmit="app.handleCreateStore(event)">
+        <div class="form-group">
+          <label>Store Name *</label>
+          <input type="text" id="store-name-input" class="form-control" required placeholder="e.g. Apex Hypermarket">
+        </div>
+        <div class="form-group">
+          <label>Store Slogan</label>
+          <input type="text" id="store-slogan-input" class="form-control" placeholder="Quality goods at retail prices">
+        </div>
+        <div class="form-group">
+          <label>Currency Code</label>
+          <input type="text" id="store-currency-input" class="form-control" value="ZAR" placeholder="ZAR">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Create Store</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Add Branch Modal (Admin) -->
+  <div id="create-branch-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Retail Branch</h3>
+        <button class="close-btn" onclick="app.closeModal('create-branch-modal')">&times;</button>
+      </div>
+      <form id="create-branch-form" onsubmit="app.handleCreateBranch(event)">
+        <div class="form-group">
+          <label>Assign to Store *</label>
+          <select id="branch-store-select" class="form-control" required></select>
+        </div>
+        <div class="form-group">
+          <label>Branch Number *</label>
+          <input type="text" id="branch-number" class="form-control" required placeholder="e.g. BR-002">
+        </div>
+        <div class="form-group">
+          <label>Branch Name / Label *</label>
+          <input type="text" id="branch-name" class="form-control" required placeholder="e.g. Cape Town Mall Branch">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Create Branch</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. Create Super Manager Modal (Admin: button text is "Create") -->
+  <div id="create-sm-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Create Super Manager</h3>
+        <button class="close-btn" onclick="app.closeModal('create-sm-modal')">&times;</button>
+      </div>
+      <form id="create-sm-form" onsubmit="app.handleCreateSuperManager(event)">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="sm-name" class="form-control" required placeholder="Full Name">
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="sm-email" class="form-control" required placeholder="email@company.com">
+        </div>
+        <div class="form-group">
+          <label>Cell Number</label>
+          <input type="text" id="sm-cell" class="form-control" placeholder="+27 82 000 0000">
+        </div>
+        <button type="submit" class="btn btn-success" style="width: 100%;">Create</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 6. Create Manager Modal (Super Manager) -->
+  <div id="create-mgr-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Create Branch Manager</h3>
+        <button class="close-btn" onclick="app.closeModal('create-mgr-modal')">&times;</button>
+      </div>
+      <form id="create-mgr-form" onsubmit="app.handleCreateManager(event)">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="mgr-name" class="form-control" required placeholder="Full Name">
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="mgr-email" class="form-control" required placeholder="manager@company.com">
+        </div>
+        <div class="form-group">
+          <label>Cell Number</label>
+          <input type="text" id="mgr-cell" class="form-control" placeholder="+27 83 000 0000">
+        </div>
+        <div class="form-group">
+          <label>Assigned Branch *</label>
+          <select id="mgr-branch-select" class="form-control" required></select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Create</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 7. Create Staff Modal (Manager) -->
+  <div id="create-staff-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Staff Member</h3>
+        <button class="close-btn" onclick="app.closeModal('create-staff-modal')">&times;</button>
+      </div>
+      <form id="create-staff-form" onsubmit="app.handleCreateStaff(event)">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="staff-name" class="form-control" required placeholder="Full Name">
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="staff-email" class="form-control" required placeholder="staff@company.com">
+        </div>
+        <div class="form-group">
+          <label>Cell Number</label>
+          <input type="text" id="staff-cell" class="form-control" placeholder="+27 84 000 0000">
+        </div>
+        <div class="form-group">
+          <label>Position *</label>
+          <select id="staff-position" class="form-control" required>
+            <option value="cashier">Cashier</option>
+            <option value="merchandiser">Merchandiser</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Create</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 8. Receive Stock Modal (Manager) -->
+  <div id="receive-stock-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Receive Stock into Stockroom</h3>
+        <button class="close-btn" onclick="app.closeModal('receive-stock-modal')">&times;</button>
+      </div>
+      <form id="receive-stock-form" onsubmit="app.handleReceiveStock(event)">
+        <div class="form-group">
+          <label>Select Product *</label>
+          <select id="receive-product-select" class="form-control" required></select>
+        </div>
+        <div class="form-group">
+          <label>Quantity Received (Units) *</label>
+          <input type="number" id="receive-qty" class="form-control" min="1" value="10" required>
+        </div>
+        <div class="form-group">
+          <label>Notes / Delivery Reference</label>
+          <input type="text" id="receive-notes" class="form-control" placeholder="Supplier Delivery PO #">
+        </div>
+        <button type="submit" class="btn btn-success" style="width: 100%;">Accept Stock into Stockroom</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 9. Add Product Modal (Manager) -->
+  <div id="add-product-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3>Add New Product</h3>
+        <button class="close-btn" onclick="app.closeModal('add-product-modal')">&times;</button>
+      </div>
+      <form id="add-product-form" onsubmit="app.handleCreateProduct(event)">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label>Brand *</label>
+            <input type="text" id="prod-brand" class="form-control" required placeholder="e.g. Sony">
+          </div>
+          <div class="form-group">
+            <label>Product Name *</label>
+            <input type="text" id="prod-name" class="form-control" required placeholder="e.g. WH-1000XM5">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="prod-cat-select" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label>Price (ZAR / R) *</label>
+            <input type="number" id="prod-price" class="form-control" required min="0" step="1" placeholder="4999">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label>6-Digit SKU (Unique) *</label>
+            <input type="text" id="prod-sku" class="form-control" required pattern="\d{6}" placeholder="100031">
+          </div>
+          <div class="form-group">
+            <label>Barcode (Unique) *</label>
+            <input type="text" id="prod-barcode" class="form-control" required placeholder="600100000031">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label>Initial Stockroom Quantity</label>
+            <input type="number" id="prod-stockroom-qty" class="form-control" min="0" value="100">
+          </div>
+          <div class="form-group">
+            <label>Initial Floor Quantity</label>
+            <input type="number" id="prod-floor-qty" class="form-control" min="0" value="50">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Create Product</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 10. Add Category Modal -->
+  <div id="add-category-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Create Product Category</h3>
+        <button class="close-btn" onclick="app.closeModal('add-category-modal')">&times;</button>
+      </div>
+      <form id="add-category-form" onsubmit="app.handleCreateCategory(event)">
+        <div class="form-group">
+          <label>Category Name *</label>
+          <input type="text" id="cat-name-input" class="form-control" required placeholder="e.g. Wearables">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="cat-desc-input" class="form-control" placeholder="Category description">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Save Category</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 11. User-Scoped Private Inbox Modal -->
+  <div id="inbox-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3>📬 Inbox</h3>
+        <button class="close-btn" onclick="app.closeModal('inbox-modal')">&times;</button>
+      </div>
+      <div id="inbox-messages-list" style="max-height: 450px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+        <!-- Rendered securely per authenticated user -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 12. Forced First Login Password Change Modal -->
   <div id="first-login-modal" class="modal-overlay" style="display: none;">
     <div class="modal-content" style="border: 2px solid #f59e0b;">
       <div class="modal-header">
-        <h3 style="color: #fbbf24;">⚠️ First Login: Set Password</h3>
+        <h3 style="color: #fbbf24;">⚠️ Set New Password</h3>
       </div>
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
         As a security requirement, you must create a new permanent password before accessing your account.
       </p>
-
-      <form onsubmit="app.handleFirstLoginPassword(event)">
+      <form id="first-login-form" onsubmit="app.handleFirstLoginPassword(event)">
         <div class="form-group">
           <label>New Password (min 6 characters)</label>
           <input type="password" id="first-login-new-pass" class="form-control" required minlength="6" placeholder="Enter new password">
@@ -600,7 +974,7 @@
     </div>
   </div>
 
-  <!-- 3. Forgot Password Modal (FR-54) -->
+  <!-- 13. Forgot Password Modal -->
   <div id="forgot-modal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
       <div class="modal-header">
@@ -608,9 +982,9 @@
         <button class="close-btn" onclick="app.closeModal('forgot-modal')">&times;</button>
       </div>
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-        Enter your account email. The system will generate a temporary password and dispatch it.
+        Enter your registered email address. If found, a temporary password will be dispatched to your inbox.
       </p>
-      <form onsubmit="app.handleForgotPassword(event)">
+      <form id="forgot-form" onsubmit="app.handleForgotPassword(event)">
         <div class="form-group">
           <label>Registered Email Address</label>
           <input type="email" id="forgot-email" class="form-control" placeholder="your-email@example.com" required>
@@ -620,14 +994,14 @@
     </div>
   </div>
 
-  <!-- 4. Profile Settings Modal (FR-52, FR-53) -->
+  <!-- 14. Profile Settings Modal -->
   <div id="profile-modal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
       <div class="modal-header">
         <h3>Profile & Password Settings</h3>
         <button class="close-btn" onclick="app.closeModal('profile-modal')">&times;</button>
       </div>
-      <form onsubmit="app.handleProfileUpdate(event)">
+      <form id="profile-form" onsubmit="app.handleProfileUpdate(event)">
         <div class="form-group">
           <label>Email Address</label>
           <input type="email" id="profile-email" class="form-control" required>
@@ -648,232 +1022,6 @@
         </div>
         <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes</button>
       </form>
-    </div>
-  </div>
-
-  <!-- 5. Create Super Manager Modal (Admin: FR-05) -->
-  <div id="create-sm-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Create Super Manager</h3>
-        <button class="close-btn" onclick="app.closeModal('create-sm-modal')">&times;</button>
-      </div>
-      <form onsubmit="app.handleCreateSuperManager(event)">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" id="sm-name" class="form-control" required placeholder="e.g. John Doe">
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="sm-email" class="form-control" required placeholder="supermanager@example.com">
-        </div>
-        <div class="form-group">
-          <label>Cell Number</label>
-          <input type="text" id="sm-cell" class="form-control" placeholder="+27 82 000 0000">
-        </div>
-        <button type="submit" class="btn btn-success" style="width: 100%;">Create & Auto-Generate Credentials</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- 6. Create Manager Modal (Super Manager: FR-11) -->
-  <div id="create-mgr-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Create Branch Manager</h3>
-        <button class="close-btn" onclick="app.closeModal('create-mgr-modal')">&times;</button>
-      </div>
-      <form onsubmit="app.handleCreateManager(event)">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" id="mgr-name" class="form-control" required placeholder="e.g. Sarah Connor">
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="mgr-email" class="form-control" required placeholder="manager@example.com">
-        </div>
-        <div class="form-group">
-          <label>Cell Number</label>
-          <input type="text" id="mgr-cell" class="form-control" placeholder="+27 83 000 0000">
-        </div>
-        <div class="form-group">
-          <label>Assigned Branch</label>
-          <select id="mgr-branch-select" class="form-control" required>
-            <!-- Rendered via JS -->
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Generate Manager Account</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- 7. Create Staff Modal (Manager: FR-17, FR-18) -->
-  <div id="create-staff-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Add Staff Member</h3>
-        <button class="close-btn" onclick="app.closeModal('create-staff-modal')">&times;</button>
-      </div>
-      <form onsubmit="app.handleCreateStaff(event)">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" id="staff-name" class="form-control" required placeholder="e.g. Sipho Sithole">
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="staff-email" class="form-control" required placeholder="staff@example.com">
-        </div>
-        <div class="form-group">
-          <label>Cell Number</label>
-          <input type="text" id="staff-cell" class="form-control" placeholder="+27 84 000 0000">
-        </div>
-        <div class="form-group">
-          <label>Position</label>
-          <select id="staff-position" class="form-control" required>
-            <option value="cashier">Cashier</option>
-            <option value="merchandiser">Merchandiser</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Create Staff Account</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- 8. Add Branch Modal (Admin: FR-04) -->
-  <div id="create-branch-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Add Retail Branch</h3>
-        <button class="close-btn" onclick="app.closeModal('create-branch-modal')">&times;</button>
-      </div>
-      <form onsubmit="app.handleCreateBranch(event)">
-        <div class="form-group">
-          <label>Branch Number</label>
-          <input type="text" id="branch-number" class="form-control" required placeholder="e.g. BR-002">
-        </div>
-        <div class="form-group">
-          <label>Branch Name / Label</label>
-          <input type="text" id="branch-name" class="form-control" required placeholder="e.g. Particles Mall Branch">
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Create Branch</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- 9. Receive Stock Modal (Manager: FR-31) -->
-  <div id="receive-stock-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Receive Stock into Stockroom</h3>
-        <button class="close-btn" onclick="app.closeModal('receive-stock-modal')">&times;</button>
-      </div>
-      <form onsubmit="app.handleReceiveStock(event)">
-        <div class="form-group">
-          <label>Select Product</label>
-          <select id="receive-product-select" class="form-control" required>
-            <!-- Rendered via JS -->
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Quantity Received (Units)</label>
-          <input type="number" id="receive-qty" class="form-control" min="1" value="10" required>
-        </div>
-        <div class="form-group">
-          <label>Notes / Delivery Reference</label>
-          <input type="text" id="receive-notes" class="form-control" placeholder="Supplier Delivery #">
-        </div>
-        <button type="submit" class="btn btn-success" style="width: 100%;">Accept Stock into Stockroom</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- 10. Add Product Modal (Manager: FR-26 to FR-29) -->
-  <div id="add-product-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content modal-lg">
-      <div class="modal-header">
-        <h3>Add New Product</h3>
-        <button class="close-btn" onclick="app.closeModal('add-product-modal')">&times;</button>
-      </div>
-      <form onsubmit="app.handleCreateProduct(event)">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div class="form-group">
-            <label>Brand</label>
-            <input type="text" id="prod-brand" class="form-control" required placeholder="e.g. Sony">
-          </div>
-          <div class="form-group">
-            <label>Product Name</label>
-            <input type="text" id="prod-name" class="form-control" required placeholder="e.g. WH-1000XM5">
-          </div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div class="form-group">
-            <label>Category</label>
-            <select id="prod-cat-select" class="form-control" required></select>
-          </div>
-          <div class="form-group">
-            <label>Price (ZAR / R)</label>
-            <input type="number" id="prod-price" class="form-control" required min="0" step="1" placeholder="4999">
-          </div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div class="form-group">
-            <label>6-Digit SKU (Unique)</label>
-            <input type="text" id="prod-sku" class="form-control" required pattern="\d{6}" placeholder="100031">
-          </div>
-          <div class="form-group">
-            <label>Barcode (Unique)</label>
-            <input type="text" id="prod-barcode" class="form-control" required placeholder="600100000031">
-          </div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div class="form-group">
-            <label>Initial Stockroom Quantity</label>
-            <input type="number" id="prod-stockroom-qty" class="form-control" min="0" value="100">
-          </div>
-          <div class="form-group">
-            <label>Initial Floor Quantity</label>
-            <input type="number" id="prod-floor-qty" class="form-control" min="0" value="50">
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Create Product</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- 11. Add Category Modal -->
-  <div id="add-category-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Create Product Category</h3>
-        <button class="close-btn" onclick="app.closeModal('add-category-modal')">&times;</button>
-      </div>
-      <form onsubmit="app.handleCreateCategory(event)">
-        <div class="form-group">
-          <label>Category Name</label>
-          <input type="text" id="cat-name-input" class="form-control" required placeholder="e.g. Wearables">
-        </div>
-        <div class="form-group">
-          <label>Description</label>
-          <input type="text" id="cat-desc-input" class="form-control" placeholder="Description">
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Save Category</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- 12. Dev Notifications Modal (Simulated Outbox / Inbox) -->
-  <div id="notifications-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content modal-lg">
-      <div class="modal-header">
-        <h3>📬 System Notifications & Email Dispatch Log</h3>
-        <button class="close-btn" onclick="app.closeModal('notifications-modal')">&times;</button>
-      </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-        All simulated emails dispatched by Connect (Temporary passwords, onboarding, resets) appear here in real-time.
-      </p>
-      <div id="notifications-list" style="max-height: 450px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
-        <!-- Rendered via JS -->
-      </div>
     </div>
   </div>
 
