@@ -1,55 +1,86 @@
-# NPRT63
-
-## NPRT63 - Project
+# NPRT63 - CONNECT Retail Inventory & Sales Management System
 
 [![Code License](https://img.shields.io/badge/Code%20License-GPLv2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Follow%20%40iammelvink-blue.svg?style=social&logo=linkedin)](https://www.linkedin.com/in/iammelvink)
 
 ## Overview
 
-This is the codebase produced for the Project course
+**Connect** is a reusable, full-stack retail management web application designed according to the **Connect System Design Specification (Version 3.2)**. The initial store configuration is **Particles Electronics**, but the platform is retailer-agnostic.
 
-Written in **Placeholder**
+The system connects stockroom inventory, sales floor replenishment, cashier point-of-sale transactions, and branch operational management into a single, cohesive dark-mode platform.
 
-1. Methodologies/Project Management:
+### Methodologies & Practices:
+- **Architecture**: Database-free client-server full-stack application (atomic JSON file storage with write locking).
+- **Design**: Dark-mode-first, fully responsive (desktop, tablet, mobile).
+- **Security**: Strict Role-Based Access Control (RBAC), branch data isolation, bcrypt password hashing, forced temporary password change on first login, and audit logging.
+- **Runtimes & Frameworks**: Node.js, Express, JavaScript, HTML5, CSS3.
 
-   - Agile
+---
 
-2. Coding Practices:
+## System Roles & Hierarchy
 
-   - OOP (Object Oriented Programming)
-   - MVC (Model View Controller)
+1. **Admin** (Email login): Platform configuration, creates stores & branches, provisions the Super Manager account. Admin accounts cannot be deleted.
+2. **Super Manager** (Employee # login): Platform-wide Manager-tier authority. Creates and deactivates Branch Managers.
+3. **Branch Manager** (Employee # login): Manages assigned branch operations, products, stockroom receiving, floor inventory, staff (Cashiers & Merchandisers), and views KPI dashboards.
+4. **Cashier** (Employee # login): Searches floor stock by 6-digit SKU or product name, scans barcodes, validates floor stock, and executes instant sales.
+5. **Merchandiser** (Employee # login): Replenishes floor stock from stockroom with strict validation to prevent stock discrepancies.
 
-3. Programming Languages/Frameworks:
+---
 
-   - Placeholder
+## Getting Started
 
-## Instructions
+### 1. Installation
 
-1. Make sure you have these installed
+Ensure Node.js (v18+) is installed. Clone the repository and install dependencies:
 
-2. Clone `ONLY THE LATEST COMMIT` of this repository into your local machine using the terminal (mac) or
-   [Gitbash (PC)](https://git-scm.com/download/win 'Gitbash (PC)') `to save storage space`
+```sh
+git clone https://github.com/qaboagcobile-wq/InventoryManNPRT63.git
+cd InventoryManNPRT63
+npm install
+```
 
-   ```sh
-   git clone https://github.com/iammelvink/NPRT63.git --depth=1
-   ```
+### 2. Seeding the Data
 
-## Author(s)
+To initialize or reset the seed data (4 Admins, 10 Categories, 30 Products with 100 stockroom / 50 floor split):
 
-"Group members and lecturer"
+```sh
+npm run seed
+```
 
-[Melvin Kisten](https://github.com/iammelvink 'Melvin Kisten\'s GitHub page')
+### 3. Launching the Application
 
-GitHub: @"Group members"
+Start the Connect server:
 
-LinkedIn: [Melvin Kisten](https://www.linkedin.com/in/iammelvink 'Melvin Kisten\'s LinkedIn page')
+```sh
+npm start
+```
 
-## Acknowledgments
+Access the application in your browser at `http://localhost:3000`.
 
-To my lecturer [Melvin Kisten](https://www.linkedin.com/in/iammelvink 'Melvin Kisten\'s LinkedIn page') for their guidance
+### 4. Running Automated Tests
 
-## More Stuff
+Run the comprehensive integration test suite verifying all specification requirements:
 
-Check out some other stuff on
-[Melvin Kisten](https://github.com/iammelvink 'Melvin Kisten\'s GitHub page')
+```sh
+node tests/verify_connect.js
+```
+
+---
+
+## Seeded Admin Accounts (Initial Login)
+
+| Full Name | Email | Initial Password | First Login Action |
+| :--- | :--- | :--- | :--- |
+| **Agcobile Qabo** | `aqabo@gmail.com` | `particles2026` | Forced password change |
+| **Sibusiso Mathonsi** | `smathonsi@gmail.com` | `particles2026` | Forced password change |
+| **Lebogang Malatje** | `lmalatjie@gmail.com` | `particles2026` | Forced password change |
+| **Kegoikantse Sebetseba** | `ksebetseba@gmail.com` | `particles2026` | Forced password change |
+
+*(A built-in Dev Notifications drawer in the top navigation allows inspecting all generated credentials and temporary passwords dispatched by the system).*
+
+---
+
+## Author(s) & Acknowledgments
+
+- **Agcobile Qabo** & Group Members
+- Lecturer: [Melvin Kisten](https://www.linkedin.com/in/iammelvink)
