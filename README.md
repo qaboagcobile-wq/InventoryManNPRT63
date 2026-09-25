@@ -67,14 +67,7 @@ node tests/verify_connect.js
 
 ---
 
-## Seeded Admin Accounts (Initial Login)
 
-| Full Name | Email | Initial Password | First Login Action |
-| :--- | :--- | :--- | :--- |
-| **Agcobile Qabo** | `aqabo@gmail.com` | `particles2026` | Forced password change |
-| **Sibusiso Mathonsi** | `smathonsi@gmail.com` | `particles2026` | Forced password change |
-| **Lebogang Malatje** | `lmalatjie@gmail.com` | `particles2026` | Forced password change |
-| **Kegoikantse Sebetseba** | `ksebetseba@gmail.com` | `particles2026` | Forced password change |
 
 *(A built-in Dev Notifications drawer in the top navigation allows inspecting all generated credentials and temporary passwords dispatched by the system).*
 
